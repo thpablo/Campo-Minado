@@ -51,7 +51,7 @@ public class Panico extends javax.swing.JFrame {
         setUndecorated(true);
         setType(java.awt.Window.Type.UTILITY);
 
-        PanicoPainel.setBackground(new java.awt.Color(255, 102, 102));
+        PanicoPainel.setBackground(new java.awt.Color(204, 204, 255));
 
         PanicClose.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         PanicClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/DD.png"))); // NOI18N
@@ -68,16 +68,16 @@ public class Panico extends javax.swing.JFrame {
         PanicoPainelLayout.setHorizontalGroup(
             PanicoPainelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanicoPainelLayout.createSequentialGroup()
-                .addContainerGap(112, Short.MAX_VALUE)
-                .addComponent(PanicClose, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(120, Short.MAX_VALUE)
+                .addComponent(PanicClose, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50))
         );
         PanicoPainelLayout.setVerticalGroup(
             PanicoPainelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanicoPainelLayout.createSequentialGroup()
                 .addGap(133, 133, 133)
-                .addComponent(PanicClose, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addComponent(PanicClose, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(85, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

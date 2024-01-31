@@ -15,7 +15,8 @@ public class Janela extends javax.swing.JFrame {
     public Janela() {
         /* Cria janelas */
         super("Campo Minado");                           //Titulo da janela
-        initComponents();    
+        initComponents();   
+        
         
 
          // Adicione um WindowListener para monitorar o fechamento da janela principal
@@ -80,27 +81,28 @@ public class Janela extends javax.swing.JFrame {
         Menu.setPreferredSize(new java.awt.Dimension(720, 100));
 
         MinasBox.setBackground(new java.awt.Color(49, 49, 49));
+        MinasBox.setAlignmentX(0.0F);
+        MinasBox.setAlignmentY(0.0F);
+        MinasBox.setFocusCycleRoot(true);
+        MinasBox.setPreferredSize(new java.awt.Dimension(119, 66));
 
         quantMinas.setBackground(new java.awt.Color(202, 62, 71));
         quantMinas.setFont(new java.awt.Font("DejaVu Sans", 1, 24)); // NOI18N
         quantMinas.setForeground(new java.awt.Color(202, 62, 71));
+        quantMinas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         quantMinas.setText("0");
+        quantMinas.setToolTipText("");
+        quantMinas.setAlignmentY(0.0F);
 
         javax.swing.GroupLayout MinasBoxLayout = new javax.swing.GroupLayout(MinasBox);
         MinasBox.setLayout(MinasBoxLayout);
         MinasBoxLayout.setHorizontalGroup(
             MinasBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MinasBoxLayout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(quantMinas)
-                .addContainerGap(26, Short.MAX_VALUE))
+            .addComponent(quantMinas, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
         );
         MinasBoxLayout.setVerticalGroup(
             MinasBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MinasBoxLayout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
-                .addComponent(quantMinas)
-                .addGap(16, 16, 16))
+            .addComponent(quantMinas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
         );
 
         quantMinas.getAccessibleContext().setAccessibleName("quantMinas");
@@ -109,6 +111,7 @@ public class Janela extends javax.swing.JFrame {
         Resetar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/feliz.png"))); // NOI18N
         Resetar.setBorderPainted(false);
         Resetar.setContentAreaFilled(false);
+        Resetar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         Resetar.setFocusable(false);
         Resetar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -119,17 +122,17 @@ public class Janela extends javax.swing.JFrame {
         Campo.setBackground(new java.awt.Color(49, 49, 49));
         Campo.setAlignmentX(0.0F);
         Campo.setAlignmentY(0.0F);
-        Campo.setPreferredSize(new java.awt.Dimension(357, 420));
+        Campo.setPreferredSize(new java.awt.Dimension(360, 360));
 
         javax.swing.GroupLayout CampoLayout = new javax.swing.GroupLayout(Campo);
         Campo.setLayout(CampoLayout);
         CampoLayout.setHorizontalGroup(
             CampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 361, Short.MAX_VALUE)
+            .addGap(0, 360, Short.MAX_VALUE)
         );
         CampoLayout.setVerticalGroup(
             CampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 368, Short.MAX_VALUE)
+            .addGap(0, 360, Short.MAX_VALUE)
         );
 
         buttonPanic.setBackground(new java.awt.Color(255, 102, 102));
@@ -157,54 +160,53 @@ public class Janela extends javax.swing.JFrame {
         Menu.setLayout(MenuLayout);
         MenuLayout.setHorizontalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Campo, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
             .addGroup(MenuLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(MenuLayout.createSequentialGroup()
-                        .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
+                        .addGap(8, 8, 8)
+                        .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Resetar)
-                        .addContainerGap())
+                        .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Resetar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(MenuLayout.createSequentialGroup()
-                        .addComponent(buttonPanic, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Campo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonPanic, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 17, Short.MAX_VALUE))))
         );
         MenuLayout.setVerticalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
                 .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(MenuLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(MenuLayout.createSequentialGroup()
-                        .addGap(15, 15, 15)
+                    .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(MenuLayout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2))
                         .addComponent(Resetar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addComponent(Campo, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addComponent(Campo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonPanic, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
+            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
         );
 
         pack();

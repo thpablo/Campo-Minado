@@ -22,15 +22,16 @@ public class Tabuleiro {
     private ArrayList<Blocos> minas;
     private final ArrayList<Blocos> bandeiras;
 
-    public Tabuleiro(Janela janela) {
-        this.quantMinas = 10;
-        this.countTab = 81;
-        this.status = false;
+    public Tabuleiro( int qMinas, boolean status) {
+        this.quantMinas = qMinas;
+        this.countTab = COLUNAS *LINHAS;
+        this.status = status;
         this.matrizBlocos = new Blocos[LINHAS][COLUNAS];
         this.bandeiras = new ArrayList<>();
-        janela.quantMinas.setText(String.valueOf(quantMinas));
-         //quantidade de minas no tabuleiro
+    }
 
+    public void iniciaTabuleiro(Janela janela) {
+        janela.quantMinas.setText(String.valueOf(quantMinas));
         preencheTabuleiro(janela);
         espalhaMinas();
     }
@@ -46,33 +47,42 @@ public class Tabuleiro {
         }
     }
 
-   private void configurarBloco(Blocos bloco, Janela janela) {
+    private void configurarBloco(Blocos bloco, Janela janela) {
         bloco.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!status){
-                    facaMouseClick(bloco, e, janela); 
+                if (!status && bloco.isEnabled()) {
+                    facaMouseClick(bloco, e, janela);
                 }
-               
+
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 bloco.requestFocus();
+                bloco.setBackground(new Color(255,102,102));
+
             }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                bloco.setBackground(new Color(41, 41, 41));
+            }
+
         });
 
         bloco.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (!status){
-                     facaTeclaPressiona(bloco, e, janela);
+                if (!status && bloco.isEnabled()) {
+                    facaTeclaPressiona(bloco, e, janela);
                 }
-               
+
             }
         });
 
         bloco.setFocusable(true);
+        bloco.setFocusPainted(false);
         bloco.requestFocusInWindow();
 
         bloco.setSize(40, 40);
@@ -83,7 +93,7 @@ public class Tabuleiro {
     }
 
     private void facaMouseClick(Blocos bloco, MouseEvent e, Janela janela) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1 && !bloco.getRedFlag().equals("red-flag")) {
             facaClickEsquerdo(bloco, janela);
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             facaClickDireito(bloco, janela);
@@ -91,7 +101,7 @@ public class Tabuleiro {
     }
 
     private void facaTeclaPressiona(Blocos bloco, KeyEvent e, Janela janela) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && !bloco.getRedFlag().equals("red-flag")) {
             facaClickEsquerdo(bloco, janela);
         } else if (e.getKeyCode() == KeyEvent.VK_1) {
             facaClickDireito(bloco, janela);
@@ -111,13 +121,23 @@ public class Tabuleiro {
     }
 
     private void facaClickDireito(Blocos bloco, Janela janela) {
-        if (bloco.isEnabled() && !"🏴".equals(bloco.getText())) {
+        if (bloco.isEnabled() && !"red-flag".equals(bloco.getRedFlag())) {
             bloco.setBackground(new Color(202, 62, 71));
-            bloco.setText("🏴");
+
+            ImageIcon icone = new ImageIcon(getClass().getResource("/red-flag.png"));
+            Image imagemOriginal = icone.getImage();
+            bloco.setRedFlag("red-flag");
+            bloco.setText("");
+            Image imagemRedimensionada = imagemOriginal.getScaledInstance(25, 25, java.awt.Image.SCALE_DEFAULT); // Ajuste os valores conforme necessário
+            icone = new ImageIcon(imagemRedimensionada);
+            bloco.setIcon(icone);
             colocaBandeira(bloco, janela);
-        } else if (bloco.isEnabled() && "🏴".equals(bloco.getText())) {
+
+        } else if (bloco.isEnabled() && "red-flag".equals(bloco.getRedFlag())) {
             bloco.setBackground(new Color(41, 41, 41));
             bloco.setText("X");
+            bloco.setRedFlag("");
+            bloco.setIcon(null);
             quantMinas++;
             janela.quantMinas.setText(String.valueOf(quantMinas));
         }
@@ -134,33 +154,31 @@ public class Tabuleiro {
         }
 
         blocoClicado = matrizBlocos[blocoClicado.getCoordenada().getX()][blocoClicado.getCoordenada().getY()];
-        
-    
+
         if (!blocoClicado.isEnabled()) {
-            
+
             return;
         }
 
         blocoClicado.setEnabled(false);
         short numMinasAoRedor = numeroMinasProximas(blocoClicado);
-        
-        this.countTab --;
- 
+
+        this.countTab--;
+
         String textInBlock = (numMinasAoRedor > 0) ? String.valueOf(numMinasAoRedor) : "";
         blocoClicado.setText(textInBlock);
 
         if (numMinasAoRedor == 0) {
-            mostraBlocosAoRedor(somaCoordenadasBloco(0, -1, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(0, 1, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 0, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(1, 0, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(1, 1, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(1, -1, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 1, blocoClicado),janela);
-            mostraBlocosAoRedor(somaCoordenadasBloco(-1, -1, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(0, -1, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(0, 1, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 0, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(1, 0, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(1, 1, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(1, -1, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 1, blocoClicado), janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(-1, -1, blocoClicado), janela);
         }
-        
-        
+
     }
 
     private short numeroMinasProximas(Blocos blocoClicado) {
@@ -247,11 +265,14 @@ public class Tabuleiro {
         status = true;
     }
 
-
     private void finalizaJogo(Janela janela) {
         for (int i = 0; i < LINHAS; i++) {
             for (int j = 0; j < COLUNAS; j++) {
-                mostraBlocosAoRedor(matrizBlocos[i][j],janela);
+                mostraBlocosAoRedor(matrizBlocos[i][j], janela);
+                if (matrizBlocos[i][j].getRedFlag().equals("red-flag")) {
+                    matrizBlocos[i][j].setText("");
+                }
+
             }
         }
 
@@ -260,14 +281,14 @@ public class Tabuleiro {
 
     private void revelaMinas() {
         for (Blocos mina : minas) {
-            
+
             ImageIcon icone = new ImageIcon(getClass().getResource("/pngwing.com.png"));
             Image imagemOriginal = icone.getImage();
-            Image imagemRedimensionada = imagemOriginal.getScaledInstance(20, 20, java.awt.Image.SCALE_DEFAULT); // Ajuste os valores conforme necessário
+            Image imagemRedimensionada = imagemOriginal.getScaledInstance(25, 25, java.awt.Image.SCALE_DEFAULT); // Ajuste os valores conforme necessário
             icone = new ImageIcon(imagemRedimensionada);
             matrizBlocos[mina.getCoordenada().getX()][mina.getCoordenada().getY()].setIcon(icone);
             matrizBlocos[mina.getCoordenada().getX()][mina.getCoordenada().getY()].setText("");
-           
+
         }
     }
 }

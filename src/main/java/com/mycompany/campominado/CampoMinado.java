@@ -9,25 +9,26 @@ public class CampoMinado {
     private Tabuleiro tabuleiro;
 
     public CampoMinado() {
-        initializeGame();
+       
     }
 
-    private void initializeGame() {
+    private void initializeGame(int cMinas) {
         janela = new Janela();
-        createNewGame(janela);
+        createNewGame(janela, cMinas);
 
         // Adiciona ação de clique no botão Resetar
         janela.Resetar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                resetGame();
+                resetGame(cMinas);
             }
         });
     }
 
-    private void createNewGame(Janela janela) {
+    private void createNewGame(Janela janela, int cMinas) {
         // Cria um novo tabuleiro passando o painel Campo para receber os blocos
-        tabuleiro = new Tabuleiro(janela);
+        tabuleiro = new Tabuleiro(10,false);
+        tabuleiro.iniciaTabuleiro(janela);
         configureJanelaVisibility();
     }
 
@@ -36,11 +37,11 @@ public class CampoMinado {
         janela.Campo.setVisible(true);
     }
 
-    private void resetGame() {
+    private void resetGame(int cMinas) {
         hideCampo();
         removeOldBlocks();
         resetTabuleiro();
-        createNewGame(janela);
+        createNewGame(janela,cMinas);
     }
 
     private void hideCampo() {
@@ -58,5 +59,7 @@ public class CampoMinado {
     public static void main(String[] args) {
        
         CampoMinado game = new CampoMinado();
+        
+        game.initializeGame(10);
     }
 }

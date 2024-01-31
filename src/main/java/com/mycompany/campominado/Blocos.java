@@ -7,10 +7,21 @@ import java.awt.Font;
 public class Blocos extends JButton {
 
     private Coordenada coordenada;
+    private String redFlag;
 
     public Blocos(int x, int y) {
+        this.redFlag="";
         initializeBlock(x, y);
     }
+
+    public String getRedFlag() {
+        return redFlag;
+    }
+
+    public void setRedFlag(String redFlag) {
+        this.redFlag = redFlag;
+    }
+    
     private void initializeBlock(int x, int y) {
         this.coordenada = new Coordenada(x, y);
         configureButtonAppearance();
