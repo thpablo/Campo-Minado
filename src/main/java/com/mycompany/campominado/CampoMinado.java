@@ -1,46 +1,62 @@
 package com.mycompany.campominado;
 
-import java.awt.event.*;
-import java.awt.event.*;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 public class CampoMinado {
+    private Janela janela;
+    private Tabuleiro tabuleiro;
 
-    Janela janela;
-    Tabuleiro tabuleiro;
+    public CampoMinado() {
+        initializeGame();
+    }
 
-    void criarJogo(Janela janela) {
-        /* Cria tabuleiro passando Painel Campo para receber os blocos */
-        tabuleiro = new Tabuleiro(janela);
-        janela.setVisible(true);
-        janela.Campo.setVisible(true);
-        /* Coloca acao de clique em Resetar */
+    private void initializeGame() {
+        janela = new Janela();
+        createNewGame(janela);
+
+        // Adiciona ação de clique no botão Resetar
         janela.Resetar.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                /* Esconde campo onde sera removido itens */
-                janela.Campo.setVisible(false);
-                /* Remove todos blocos antigos */
-                janela.Campo.removeAll();
-                /* Muda Cara para feliz */
-                janela.Resetar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/feliz.png")));
-                /* Anula referencia ao jogo anterior */
-                tabuleiro = null;
-                /* Cria novo jogo */
-                criarJogo(janela);
+                resetGame();
             }
         });
     }
 
-    CampoMinado() {
-        /* Cria janela com os componentes visuais */
-        janela = new Janela();
-        /* Cria Tabuleiro que contem o jogo */
-        criarJogo(janela);
+    private void createNewGame(Janela janela) {
+        // Cria um novo tabuleiro passando o painel Campo para receber os blocos
+        tabuleiro = new Tabuleiro(janela);
+        configureJanelaVisibility();
+    }
+
+    private void configureJanelaVisibility() {
+        janela.setVisible(true);
+        janela.Campo.setVisible(true);
+    }
+
+    private void resetGame() {
+        hideCampo();
+        removeOldBlocks();
+        resetTabuleiro();
+        createNewGame(janela);
+    }
+
+    private void hideCampo() {
+        janela.Campo.setVisible(false);
+    }
+
+    private void removeOldBlocks() {
+        janela.Campo.removeAll();
+    }
+
+    private void resetTabuleiro() {
+        tabuleiro = null;
     }
 
     public static void main(String[] args) {
+       
         CampoMinado game = new CampoMinado();
     }
 }

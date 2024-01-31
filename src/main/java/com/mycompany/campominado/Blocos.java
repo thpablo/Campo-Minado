@@ -1,25 +1,33 @@
 package com.mycompany.campominado;
 
 import javax.swing.JButton;
-import java.awt.*;
-/* Classe com blocos que sao botoes clicaveis */
+import java.awt.Font;
+
+/* Classe representando blocos que são botões clicáveis no campo minado */
 public class Blocos extends JButton {
 
-    /* Classe de coordenadas */
-    public class Coordenada {
+    private Coordenada coordenada;
 
-        int x, y;
-
-        Coordenada(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
+    public Blocos(int x, int y) {
+        initializeBlock(x, y);
     }
-    Coordenada coordenada;
-
-    Blocos(int x, int y) {
+    private void initializeBlock(int x, int y) {
         this.coordenada = new Coordenada(x, y);
+        configureButtonAppearance();
+    }
+    
+
+    private void configureButtonAppearance() {
         this.setFont(new Font("Arial", Font.PLAIN, 30));
-        this.setText("x");
+        this.setText("X"); // Adicione lógica para exibir o conteúdo desejado
+        // Exemplo: this.setText(coordenada.toString());
+    }
+    
+    public Coordenada getCoordenada() {
+        return coordenada;
+    }
+
+    public void setCoordenada(Coordenada coordenada) {
+        this.coordenada = coordenada;
     }
 }

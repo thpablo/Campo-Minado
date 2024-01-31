@@ -1,33 +1,58 @@
-package com.mycompany.campominado;
+ package com.mycompany.campominado;
 
 import javax.swing.*;
-import java.awt.*;
+
 import java.awt.event.*;
 
 public class Janela extends javax.swing.JFrame {
+   private Panico p;
 
+    
+    
     public void mudarRostoResetar(boolean venceuJogo) {
-        if (venceuJogo) {
-            Resetar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/feliz.png")));
-        } else {
-            Resetar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/triste.png")));
-        }
-
-    }
-
-    public void iniciaModoPanico(JPanel Panico) {
-    }
-
+        //Resetar.setIcon(venceuJogo ? caraFeliz : caraTriste);
+    }    
     public Janela() {
         /* Cria janelas */
         super("Campo Minado");                           //Titulo da janela
-        initComponents();                                   //Estabelece tamanho
-        iniciaModoPanico(Panico);
+        initComponents();    
+        
+
+         // Adicione um WindowListener para monitorar o fechamento da janela principal
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (p != null && p.isVisible()) {
+                    p.dispose();  // Fecha a janela Panico
+                }
+            }
+        });
+        
+    
+ 
+//Estabelece tamanho
         Campo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         Menu.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         this.setLocationRelativeTo(null);                   //Centraliza na tela
         this.setResizable(false);                           //Bloqueia redimensionar a tela
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Encerra programa ao fechar janela
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Encerra programa ao fechar janela
+        
+        
+    }
+    
+      private void abrirOutroFrame() {
+        // Crie um novo frame (você pode ajustar o código conforme necessário)
+        JFrame outroFrame = new JFrame("Outro Frame");
+        outroFrame.setSize(300, 200);
+        outroFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // Adicione algum conteúdo ao novo frame (você pode ajustar o código conforme necessário)
+        JLabel label = new JLabel("Este é outro frame!");
+        outroFrame.add(label);
+
+        // Tornar o novo frame visível
+        outroFrame.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -39,7 +64,9 @@ public class Janela extends javax.swing.JFrame {
         quantMinas = new javax.swing.JLabel();
         Resetar = new javax.swing.JButton();
         Campo = new javax.swing.JPanel();
-        Panico = new javax.swing.JPanel();
+        buttonPanic = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 51, 51));
@@ -78,101 +105,139 @@ public class Janela extends javax.swing.JFrame {
 
         quantMinas.getAccessibleContext().setAccessibleName("quantMinas");
 
-        Resetar.setBackground(new java.awt.Color(73, 73, 73));
+        Resetar.setBackground(new java.awt.Color(65, 65, 65));
         Resetar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/feliz.png"))); // NOI18N
+        Resetar.setBorderPainted(false);
+        Resetar.setContentAreaFilled(false);
+        Resetar.setFocusable(false);
         Resetar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ResetarActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
-        Menu.setLayout(MenuLayout);
-        MenuLayout.setHorizontalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(57, 57, 57)
-                .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(206, 206, 206)
-                .addComponent(Resetar)
-                .addContainerGap(331, Short.MAX_VALUE))
-        );
-        MenuLayout.setVerticalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(Resetar)
-                    .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
-        );
-
         Campo.setBackground(new java.awt.Color(49, 49, 49));
         Campo.setAlignmentX(0.0F);
         Campo.setAlignmentY(0.0F);
-        Campo.setPreferredSize(new java.awt.Dimension(357, 720));
+        Campo.setPreferredSize(new java.awt.Dimension(357, 420));
 
         javax.swing.GroupLayout CampoLayout = new javax.swing.GroupLayout(Campo);
         Campo.setLayout(CampoLayout);
         CampoLayout.setHorizontalGroup(
             CampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 361, Short.MAX_VALUE)
         );
         CampoLayout.setVerticalGroup(
             CampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
+            .addGap(0, 368, Short.MAX_VALUE)
         );
 
-        Panico.setBackground(new java.awt.Color(255, 0, 0));
+        buttonPanic.setBackground(new java.awt.Color(255, 102, 102));
+        buttonPanic.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        buttonPanic.setForeground(new java.awt.Color(255, 255, 255));
+        buttonPanic.setText("Panico");
+        buttonPanic.setBorder(null);
+        buttonPanic.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                buttonPanicMouseEntered(evt);
+            }
+        });
 
-        javax.swing.GroupLayout PanicoLayout = new javax.swing.GroupLayout(Panico);
-        Panico.setLayout(PanicoLayout);
-        PanicoLayout.setHorizontalGroup(
-            PanicoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 33, Short.MAX_VALUE)
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("DejaVu Sans", 1, 15)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("1 - Marca Bandeira");
+
+        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 15)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Enter - Explode Posicao");
+
+        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
+        Menu.setLayout(MenuLayout);
+        MenuLayout.setHorizontalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Campo, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(MenuLayout.createSequentialGroup()
+                        .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Resetar)
+                        .addContainerGap())
+                    .addGroup(MenuLayout.createSequentialGroup()
+                        .addComponent(buttonPanic, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
-        PanicoLayout.setVerticalGroup(
-            PanicoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 27, Short.MAX_VALUE)
+        MenuLayout.setVerticalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(MenuLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(MinasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(MenuLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(Resetar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addComponent(Campo, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonPanic, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(Campo, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(Panico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(Campo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(Panico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+   
     private void ResetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetarActionPerformed
-        // TODO add your handling code here:
+        this.Resetar.setIcon(new ImageIcon(getClass().getResource("/feliz.png")));  
     }//GEN-LAST:event_ResetarActionPerformed
 
-
+    private void buttonPanicMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonPanicMouseEntered
+        // TODO add your handling code here:
+          // Cria uma instância do painel Panico
+        if (p == null || !p.isActive()) {
+            p = new Panico(this);
+            p.setVisible(true);
+       
+    }
+        
+          
+    
+    }//GEN-LAST:event_buttonPanicMouseEntered
+  
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JPanel Campo;
     public javax.swing.JPanel Menu;
     public javax.swing.JPanel MinasBox;
-    private javax.swing.JPanel Panico;
     public javax.swing.JButton Resetar;
+    private javax.swing.JButton buttonPanic;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     public javax.swing.JLabel quantMinas;
     // End of variables declaration//GEN-END:variables
 }

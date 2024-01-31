@@ -1,102 +1,186 @@
 package com.mycompany.campominado;
 
 import java.awt.Color;
-import java.awt.event.ActionListener;
-import java.util.*;
+import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.*;
-import java.awt.event.*;
 
-/* Os blocos usados sao JButtons com coordenadas */
 public class Tabuleiro {
 
-    /* Propriedades do Tabuleiro */
-    int colunas = 9;
-    int linhas = 9;
-    int quantMinas;
-    boolean ganhou;
+    private static final int COLUNAS = 9;
+    private static final int LINHAS = 9;
+    private int quantMinas;
+    private int countTab;
+    private boolean status;
 
-    //Matriz de Blocos para o tabuleiro
-    Blocos[][] matrizBlocos;
-    ArrayList<Blocos> minas;
-    ArrayList<Blocos> bandeiras;
+    private final Blocos[][] matrizBlocos;
+    private ArrayList<Blocos> minas;
+    private final ArrayList<Blocos> bandeiras;
 
-    /* Verifica se coordenada aleatoria ja existe no vetor de minas */
-    private boolean coordenadaJaExisteMina(int x, int y) {
-        for (Blocos mina : minas) {
-            if (mina.coordenada.x == x && mina.coordenada.y == y) {
-                return true;
+    public Tabuleiro(Janela janela) {
+        this.quantMinas = 10;
+        this.countTab = 81;
+        this.status = false;
+        this.matrizBlocos = new Blocos[LINHAS][COLUNAS];
+        this.bandeiras = new ArrayList<>();
+        janela.quantMinas.setText(String.valueOf(quantMinas));
+         //quantidade de minas no tabuleiro
+
+        preencheTabuleiro(janela);
+        espalhaMinas();
+    }
+
+    private void preencheTabuleiro(Janela janela) {
+        for (int i = 0; i < LINHAS; i++) {
+            for (int j = 0; j < COLUNAS; j++) {
+                Blocos bloco = new Blocos(i, j);
+                configurarBloco(bloco, janela);
+                this.matrizBlocos[i][j] = bloco;
+                janela.Campo.add(matrizBlocos[i][j]);
             }
         }
-        return false;
     }
 
-
-    /* Espalha as minas em posicoes aleatoria da matriz de blocos */
-    private void espalhaMinas() {
-        //Lista de posicoes para as minas
-
-        minas = new ArrayList<>();
-        Random random = new Random();
-        int randX = random.nextInt(linhas);
-        int randY = random.nextInt(colunas);
-
-        /*Escolhe posicao random da matriz de blocos do tabuleiro */
-        Blocos novaMina = matrizBlocos[randX][randY];
-        minas.add(novaMina);
-        System.out.printf("%d %d\n", novaMina.coordenada.x, novaMina.coordenada.y);
-        for (int i = 1; i < quantMinas; i++) {
-            while (coordenadaJaExisteMina(randX, randY)) {
-                randX = random.nextInt(linhas);
-                randY = random.nextInt(colunas);
+   private void configurarBloco(Blocos bloco, Janela janela) {
+        bloco.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!status){
+                    facaMouseClick(bloco, e, janela); 
+                }
+               
             }
-            novaMina = matrizBlocos[randX][randY];
-            System.out.printf("%d %d\n", novaMina.coordenada.x, novaMina.coordenada.y);
-            minas.add(novaMina);
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                bloco.requestFocus();
+            }
+        });
+
+        bloco.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (!status){
+                     facaTeclaPressiona(bloco, e, janela);
+                }
+               
+            }
+        });
+
+        bloco.setFocusable(true);
+        bloco.requestFocusInWindow();
+
+        bloco.setSize(40, 40);
+        bloco.setLocation(40 * bloco.getCoordenada().getY(), 40 * bloco.getCoordenada().getX());
+        bloco.setForeground(Color.WHITE);
+        bloco.setBackground(new Color(41, 41, 41));
+        bloco.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    }
+
+    private void facaMouseClick(Blocos bloco, MouseEvent e, Janela janela) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            facaClickEsquerdo(bloco, janela);
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            facaClickDireito(bloco, janela);
         }
     }
 
-    /*Verofica se clicou em uma mina */
-    public boolean verificaClicouMina(Blocos blocoClicado) {
-        if (blocoClicado.getText() == "x") {
+    private void facaTeclaPressiona(Blocos bloco, KeyEvent e, Janela janela) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            facaClickEsquerdo(bloco, janela);
+        } else if (e.getKeyCode() == KeyEvent.VK_1) {
+            facaClickDireito(bloco, janela);
+        }
+    }
 
-            /* Verifica se o bloco clicado esta na lista de blocos de minas */
-            if (minas.contains(blocoClicado)) {
-                return true;
+    private void facaClickEsquerdo(Blocos bloco, Janela janela) {
+        if (verificaClicouMina(bloco)) {
+            perdeuJogo(janela);
+
+        } else {
+            mostraBlocosAoRedor(bloco, janela);
+            if (countTab == quantMinas) {
+                ganhouJogo(janela);
             }
         }
-        return false;
     }
 
-    /* Revela as minas no fim do jogo */
-    public void revelaMinas() {
-        /* Percorre Vetor das Minas e adiciona na matriz de blocos a bomba referente a coordenada */
-        for (Blocos mina : minas) {
-            matrizBlocos[mina.coordenada.x][mina.coordenada.y].setText("💣");
+    private void facaClickDireito(Blocos bloco, Janela janela) {
+        if (bloco.isEnabled() && !"🏴".equals(bloco.getText())) {
+            bloco.setBackground(new Color(202, 62, 71));
+            bloco.setText("🏴");
+            colocaBandeira(bloco, janela);
+        } else if (bloco.isEnabled() && "🏴".equals(bloco.getText())) {
+            bloco.setBackground(new Color(41, 41, 41));
+            bloco.setText("X");
+            quantMinas++;
+            janela.quantMinas.setText(String.valueOf(quantMinas));
         }
     }
 
-    /*Calcula quantidade de minas ao Redor */
-    public short numeroMinasProximas(Blocos blocoClicado) {
-        short n = 0; //Numero de minas
+    private boolean verificaClicouMina(Blocos blocoClicado) {
+        return blocoClicado.getText().equals("X") && minas.contains(blocoClicado);
+    }
 
-        int lBloco = blocoClicado.coordenada.x; //Linha do Bloco
-        int cBloco = blocoClicado.coordenada.y; //Coluna do Bloco
+    private void mostraBlocosAoRedor(Blocos blocoClicado, Janela janela) {
+        if (blocoClicado.getCoordenada().getX() < 0 || blocoClicado.getCoordenada().getX() >= LINHAS
+                || blocoClicado.getCoordenada().getY() < 0 || blocoClicado.getCoordenada().getY() >= COLUNAS) {
+            return;
+        }
 
-        /* Faz somatorio de coordenadas para X e Y */
+        blocoClicado = matrizBlocos[blocoClicado.getCoordenada().getX()][blocoClicado.getCoordenada().getY()];
+        
+    
+        if (!blocoClicado.isEnabled()) {
+            
+            return;
+        }
+
+        blocoClicado.setEnabled(false);
+        short numMinasAoRedor = numeroMinasProximas(blocoClicado);
+        
+        this.countTab --;
+ 
+        String textInBlock = (numMinasAoRedor > 0) ? String.valueOf(numMinasAoRedor) : "";
+        blocoClicado.setText(textInBlock);
+
+        if (numMinasAoRedor == 0) {
+            mostraBlocosAoRedor(somaCoordenadasBloco(0, -1, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(0, 1, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 0, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(1, 0, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(1, 1, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(1, -1, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 1, blocoClicado),janela);
+            mostraBlocosAoRedor(somaCoordenadasBloco(-1, -1, blocoClicado),janela);
+        }
+        
+        
+    }
+
+    private short numeroMinasProximas(Blocos blocoClicado) {
+        short n = 0;
+
+        int lBloco = blocoClicado.getCoordenada().getX();
+        int cBloco = blocoClicado.getCoordenada().getY();
+
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 int linhaAdjacente = lBloco + i;
                 int colunaAdjacente = cBloco + j;
 
-                // Verifica se a posição é válida
-                if (linhaAdjacente >= 0 && linhaAdjacente < linhas
-                        && colunaAdjacente >= 0 && colunaAdjacente < colunas) {
+                if (linhaAdjacente >= 0 && linhaAdjacente < LINHAS
+                        && colunaAdjacente >= 0 && colunaAdjacente < COLUNAS) {
 
                     Blocos blocoAoRedor = matrizBlocos[linhaAdjacente][colunaAdjacente];
 
-                    // Verifica se o bloco adjacente contém uma mina
-                    if (coordenadaJaExisteMina(blocoAoRedor.coordenada.x, blocoAoRedor.coordenada.y)) {
-                        n++; //Soma quantidade de minas ao redor
+                    if (coordenadaJaExisteMina(blocoAoRedor.getCoordenada().getX(), blocoAoRedor.getCoordenada().getY())) {
+                        n++;
                     }
                 }
             }
@@ -104,92 +188,37 @@ public class Tabuleiro {
         return n;
     }
 
-    /* Retorna bloco com coordenadas Somadas */
-    public Blocos somaCoordenadasBloco(int acrescimoX, int acrescimoY, Blocos blocoAtual) {
-        return new Blocos((blocoAtual.coordenada.x + acrescimoX), (blocoAtual.coordenada.y + acrescimoY));
+    private Blocos somaCoordenadasBloco(int acrescimoX, int acrescimoY, Blocos blocoAtual) {
+        return new Blocos((blocoAtual.getCoordenada().getX() + acrescimoX), (blocoAtual.getCoordenada().getY() + acrescimoY));
     }
 
-    /* Mostra blocos colocando valor neles recursivamente */
-    public void mostraBlocosAoRedor(Blocos blocoClicado) {
-        /* Caso base */
-        if (blocoClicado.coordenada.x < 0 || blocoClicado.coordenada.x >= linhas
-                || blocoClicado.coordenada.y < 0 || blocoClicado.coordenada.y >= colunas) {
-            return;
-        }
-        /* Bloco Clicado recebe os botoes de matrizBlocos referente a coordenada */
-        blocoClicado = matrizBlocos[blocoClicado.coordenada.x][blocoClicado.coordenada.y];
+    private boolean coordenadaJaExisteMina(int x, int y) {
+        return minas.stream().anyMatch(mina -> mina.getCoordenada().getX() == x && mina.getCoordenada().getY() == y);
+    }
 
-        /* Se o bloco clicado ja estiver desabilitado, nao precisa fazera verificacao */
-        if (blocoClicado.isEnabled() == false) {
-            return;
-        }
-        blocoClicado.setEnabled(false); //Desabilita botao
-        //Recebe quantidade de minas ao redor
-        short numMinasAoRedor = numeroMinasProximas(blocoClicado);
-        // Atribui o numero ao bloco
-        String textInBlock = (numMinasAoRedor > 0) ? String.valueOf(numMinasAoRedor) : "";
-        blocoClicado.setText(textInBlock);
+    private void espalhaMinas() {
+        this.minas = new ArrayList<>();
+        Random random = new Random();
 
-        /* Verifica minas ao redor recursivamente */
-        if (numMinasAoRedor == 0) {
-            /*Verificacao dos lados 
-            /* Esquerda */
-            mostraBlocosAoRedor(somaCoordenadasBloco(0, -1, blocoClicado));
-            /* Direita */
-            mostraBlocosAoRedor(somaCoordenadasBloco(0, 1, blocoClicado));
+        for (int i = 0; i < quantMinas; i++) {
+            int randX, randY;
 
-            /* Cima */
-            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 0, blocoClicado));
+            do {
+                randX = random.nextInt(LINHAS);
+                randY = random.nextInt(COLUNAS);
+            } while (coordenadaJaExisteMina(randX, randY));
 
-            /* Baixo */
-            mostraBlocosAoRedor(somaCoordenadasBloco(1, 0, blocoClicado));
-
-            /*Diagonais*/
- /* Baixo Direita */
-            mostraBlocosAoRedor(somaCoordenadasBloco(1, 1, blocoClicado));
-
-            /* Baixo Esquerda */
-            mostraBlocosAoRedor(somaCoordenadasBloco(1, -1, blocoClicado));
-
-            /* Cima Direita */
-            mostraBlocosAoRedor(somaCoordenadasBloco(-1, 1, blocoClicado));
-
-            /* Cima Esquerda */
-            mostraBlocosAoRedor(somaCoordenadasBloco(-1, -1, blocoClicado));
-
+            Blocos novaMina = matrizBlocos[randX][randY];
+            System.out.println(" i  | j  " + novaMina.getCoordenada().getX() + "| " + novaMina.getCoordenada().getY());
+            this.minas.add(novaMina);
         }
     }
 
-    /* Procedimento de ganhar Perdeu */
-    public void perdeuJogo(Janela janela) {
-        janela.mudarRostoResetar(false);
-        finalizaJogo();
-        JOptionPane.showMessageDialog(null, "Opa! Você  perdeu o jogo 😞", "Perdeu", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    /* Procedimento de ganhar Jogo */
-    public void ganhouJogo(Janela janela) {
-        janela.mudarRostoResetar(true);
-        finalizaJogo();
-        JOptionPane.showMessageDialog(null, "Parabéns! Você venceu o jogo 😊", "Venceu", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    /* Verifica se todas posicoes marcadas estao na lista de posicoes minas */
-    public boolean verificaSeGanhou() {
-        for (Blocos blocoBandeira : bandeiras) {
-            if (!minas.contains(blocoBandeira)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void colocaBandeira(Blocos blocoSelecionado, Janela janela) {
-        /* Coloca bloco marcado no vetor de bandeiras */
-        bandeiras.add(matrizBlocos[blocoSelecionado.coordenada.x][blocoSelecionado.coordenada.y]);
-        /* Decrementa quantMinas */
+    private void colocaBandeira(Blocos blocoSelecionado, Janela janela) {
+        this.bandeiras.add(matrizBlocos[blocoSelecionado.getCoordenada().getX()][blocoSelecionado.getCoordenada().getY()]);
         quantMinas--;
         janela.quantMinas.setText(String.valueOf(quantMinas));
+
         if (quantMinas == 0) {
             if (verificaSeGanhou()) {
                 ganhouJogo(janela);
@@ -199,78 +228,46 @@ public class Tabuleiro {
         }
     }
 
-    /* Finaliza jogo */
-    public void finalizaJogo() {
-        /* Revela Blocos com os valores das minas */
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                mostraBlocosAoRedor(matrizBlocos[i][j]);
+    private boolean verificaSeGanhou() {
+        return bandeiras.stream().allMatch(blocoBandeira -> minas.contains(blocoBandeira));
+    }
+
+    private void perdeuJogo(Janela janela) {
+        janela.mudarRostoResetar(false);
+        finalizaJogo(janela);
+        janela.Resetar.setIcon(new ImageIcon(getClass().getResource("/triste.png")));
+        JOptionPane.showMessageDialog(null, "Opa! Você  perdeu o jogo 😞", "Perdeu", JOptionPane.INFORMATION_MESSAGE);
+        status = true;
+    }
+
+    private void ganhouJogo(Janela janela) {
+        janela.mudarRostoResetar(true);
+        finalizaJogo(janela);
+        JOptionPane.showMessageDialog(null, "Parabéns! Você venceu o jogo 😊", "Venceu", JOptionPane.INFORMATION_MESSAGE);
+        status = true;
+    }
+
+
+    private void finalizaJogo(Janela janela) {
+        for (int i = 0; i < LINHAS; i++) {
+            for (int j = 0; j < COLUNAS; j++) {
+                mostraBlocosAoRedor(matrizBlocos[i][j],janela);
             }
         }
-        /* Revela Minas */
+
         revelaMinas();
     }
 
-    /* Construtor do tabuleiro */
-    Tabuleiro(Janela janela) {
-        /* Cria matriz de Blocos */
-        matrizBlocos = new Blocos[linhas][colunas];
-        /* Cria vetor de bandeiras */
-        bandeiras = new ArrayList<>();
-        /* Estabelece quantidade de minas */
-        quantMinas = 10;
-        janela.quantMinas.setText(String.valueOf(quantMinas));
-        /*Preenche Tabuleiro */
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                Blocos bloco = new Blocos(i, j);
-                /* Adiciona Evento de clique de mouse */
-                bloco.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-
-                        /*Botao 1 = Botao Esquerdo */
-                        if (e.getButton() == MouseEvent.BUTTON1) {
-                            /* Verifica se clicou na mina (Perdeu) */
-                            if (verificaClicouMina(bloco)) {
-                                perdeuJogo(janela);
-                            } else { //Caso nao tenha sido uma mina em que clicou
-                                mostraBlocosAoRedor(bloco);
-                            }
-                        } /* Botao 3 = Botao Direito */ else if (e.getButton() == MouseEvent.BUTTON3) {
-                            /* Adiciona marcacao */
-                            if (bloco.isEnabled() && bloco.getText() != "🏴") {
-                                bloco.setBackground(new Color(202, 62, 71));
-                                bloco.setText("🏴");
-                                colocaBandeira(bloco, janela);
-                            } /* Retira marcacao */ else if (bloco.isEnabled() && bloco.getText() == "🏴") {
-                                bloco.setBackground(new Color(41, 41, 41));
-                                bloco.setText("x");
-                                /* Incrementa quantMinas */
-                                quantMinas++;
-                                janela.quantMinas.setText(String.valueOf(quantMinas));
-                            }
-                        }
-                    }
-
-                });
-
-                /* Crio blocos das minas e adiciono na matriz */
-                matrizBlocos[i][j] = bloco;
-                matrizBlocos[i][j].setSize(80, 80);
-                matrizBlocos[i][j].setLocation(80 * j, 80 * i);
-                matrizBlocos[i][j].setForeground(Color.WHITE);
-                /*Estilizacao bloco*/
-                matrizBlocos[i][j].setBackground(new Color(41, 41, 41));
-                matrizBlocos[i][j].setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Color.BLACK, 1),
-                        BorderFactory.createLineBorder(Color.BLACK, 1)
-                ));
-                /* Adiciona blocos no Painel Campo */
-                janela.Campo.add(matrizBlocos[i][j]);
-            }
+    private void revelaMinas() {
+        for (Blocos mina : minas) {
+            
+            ImageIcon icone = new ImageIcon(getClass().getResource("/pngwing.com.png"));
+            Image imagemOriginal = icone.getImage();
+            Image imagemRedimensionada = imagemOriginal.getScaledInstance(20, 20, java.awt.Image.SCALE_DEFAULT); // Ajuste os valores conforme necessário
+            icone = new ImageIcon(imagemRedimensionada);
+            matrizBlocos[mina.getCoordenada().getX()][mina.getCoordenada().getY()].setIcon(icone);
+            matrizBlocos[mina.getCoordenada().getX()][mina.getCoordenada().getY()].setText("");
+           
         }
-        /* Seta posicao randomica das minas */
-        espalhaMinas();
     }
 }
